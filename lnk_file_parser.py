@@ -6,18 +6,17 @@ WIN_RECENT = os.path.join("C:\\", "Users", username, "AppData", "Roaming", "Micr
 OFFICE_RECENT = os.path.join("C:\\", "Users", username, "AppData", "Roaming", "Microsoft", "Office", "Recent")
 
 def lnk_parser(lnk_files: list[str]):
-    """
-    Parses the lnk file and extracts metadata of the target file 
-    """
     for lnk_file in lnk_files:
-        lnk: pylnk3.Lnk = pylnk3.parse(lnk_file)  # type: ignore
-        print(f"{lnk.file}")
-        print(f"Creation time: {lnk.creation_time}")       # Target file created time
-        print(f"Last access: {lnk.access_time}")       # Target file last access time
-        print(f"Logical file size: {lnk.file_size}")         # Target file logical size
-        print(f"Modification time: {lnk.modification_time}")   # Modification time
-        print("-------------------")
-
+        try:
+            lnk: pylnk3.Lnk = pylnk3.parse(lnk_file) #type: ignore
+            print(f"{lnk.file}")
+            print(f"Creation time: {lnk.creation_time}")
+            print(f"Last access: {lnk.access_time}")
+            print(f"Logical file size: {lnk.file_size}")
+            print(f"Modification time: {lnk.modification_time}")
+            print("-------------------")
+        except Exception as e:
+            print(f"Failed to parse {lnk_file}: {e}")
 
 def file_extraction(path: str):
     """
