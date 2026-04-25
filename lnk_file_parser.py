@@ -6,6 +6,9 @@ WIN_RECENT = os.path.join("C:\\", "Users", username, "AppData", "Roaming", "Micr
 OFFICE_RECENT = os.path.join("C:\\", "Users", username, "AppData", "Roaming", "Microsoft", "Office", "Recent")
 
 def lnk_parser(lnk_files: list[str]):
+    """
+    Parses the lnk file and extracts metadata of the target file 
+    """
     for lnk_file in lnk_files:
         lnk: pylnk3.Lnk = pylnk3.parse(lnk_file)  # type: ignore
         print(f"{lnk.file}")
@@ -17,6 +20,9 @@ def lnk_parser(lnk_files: list[str]):
 
 
 def file_extraction(path: str):
+    """
+    Looks at the dir, takes files with .lnk file extension
+    """
     lnk_arr = [os.path.join(path, file) for file in os.listdir(path) if file.lower().endswith(".lnk")]
     return lnk_arr
 
