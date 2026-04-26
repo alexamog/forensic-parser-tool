@@ -42,8 +42,6 @@ The correct approach is to navigate the binary structure directly:
 4. Jump to VolumeID using `LinkInfo start + VolumeID offset` to read drive type, serial number, and volume label
 5. Jump to LocalBasePath using `LinkInfo start + LocalBasePath offset` to read the target path
 
-This is the approach used by professional forensic tools such as Autopsy and Eric Zimmermann's LECmd.
-
 ---
 
 ## Key takeaways
