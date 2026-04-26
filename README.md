@@ -10,14 +10,14 @@ The goal of this project is to build parsers from the ground up — reading raw 
 
 | Artifact | Script | Theory |
 |----------|--------|--------|
-| LNK Files (Shell Link) | `lnk_file_parser.py` | [LNK_THEORY.md](LNK_THEORY.md) |
+| LNK Files (Shell Link) | `lnk_file_parser.py` | [LNK_THEORY.md](Explanations/LNK_THEORY.md) |
 
 ---
 
 ## Supporting Documentation
 
-- [LNK_THEORY.md](LNK_THEORY.md) — What LNK files are, their forensic value, and how they are structured
-- [ENDIANNESS.md](ENDIANNESS.md) — Explanation of endianness and why it matters when parsing Windows binary formats
+- [LNK_THEORY.md](Explanations/LNK_THEORY.md) — What LNK files are, their forensic value, and how they are structured
+- [ENDIANNESS.md](Explanations/ENDIANNESS.md) — Explanation of endianness and why it matters when parsing Windows binary formats
 
 ---
 
