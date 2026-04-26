@@ -1,25 +1,32 @@
-# Forensic LNK File Parser
+# Windows Forensic Parser Tools
 
-A Python script that parses Windows LNK (Shell Link) files and extracts forensically relevant metadata, outputting results to JSON.
+A growing collection of Python scripts for parsing Windows forensic artifacts. Each tool extracts forensically relevant metadata from a specific artifact type, outputs results to JSON, and is accompanied by a theory document explaining the artifact and its investigative value.
 
-## What it does
+The goal of this project is to build parsers from the ground up — reading raw binary directly using Python's `struct` module rather than relying on third-party libraries — in order to develop a deep understanding of the underlying file formats.
 
-Scans `C:\Users\<user>\AppData\Roaming\Microsoft\Windows\Recent` for LNK files and extracts the following fields from each:
+---
 
-- Target file timestamps (created, last access, last written)
-- Logical file size
-- Drive type (fixed, removable, network, etc.)
-- Volume serial number
-- Volume name
-- Target path
+## Tools
 
-Results are written to `lnk_results.json`.
+| Artifact | Script | Theory |
+|----------|--------|--------|
+| LNK Files (Shell Link) | `lnk_file_parser.py` | [LNK_THEORY.md](LNK_THEORY.md) |
+
+---
+
+## Supporting Documentation
+
+- [LNK_THEORY.md](LNK_THEORY.md) — What LNK files are, their forensic value, and how they are structured
+- [ENDIANNESS.md](ENDIANNESS.md) — Explanation of endianness and why it matters when parsing Windows binary formats
+
+---
 
 ## Requirements
 
-```
-pip install -r requirements.txt
-```
+- Python 3.10+
+- No third-party libraries required (uses `struct` from the standard library)
+
+---
 
 ## Usage
 
@@ -27,7 +34,4 @@ pip install -r requirements.txt
 python lnk_file_parser.py
 ```
 
-## Dependencies
-
-- Python 3.10+
-- No third-party libraries required for the parser (uses `struct` from the standard library)
+Results are written to `lnk_results.json`.
