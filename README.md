@@ -11,12 +11,14 @@ The goal of this project is to build parsers from the ground up — reading raw 
 | Artifact | Script | Theory |
 |----------|--------|--------|
 | LNK Files (Shell Link) | `lnk_file_parser.py` | [LNK_THEORY.md](Explanations/LNK_THEORY.md) |
+<!-- | Prefetch Files | `prefetch_parser.py` *(coming soon)* | [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) | -->
 
 ---
 
 ## Supporting Documentation
 
 - [LNK_THEORY.md](Explanations/LNK_THEORY.md) — What LNK files are, their forensic value, and how they are structured
+- [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) — What prefetch files are, their forensic value, and how they are structured
 - [ENDIANNESS.md](Explanations/ENDIANNESS.md) — Explanation of endianness and why it matters when parsing Windows binary formats
 
 ---
