@@ -6,6 +6,15 @@ from datetime import datetime, timezone, timedelta
 username = os.getlogin()
 FILETIME_EPOCH = datetime(1601, 1, 1, tzinfo=timezone.utc)
 WIN_RECENT = os.path.join("C:\\", "Users", username, "AppData", "Roaming", "Microsoft", "Windows", "Recent")
+DRIVE_TYPES = {
+    0: "Unknown",
+    1: "No root directory",
+    2: "Removable",
+    3: "Fixed",
+    4: "Network",
+    5: "CD-ROM",
+    6: "RAM disk",
+}
 
 
 def format_file_size(size_bytes: int) -> str:
@@ -40,16 +49,23 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
                 id_list_size = struct.unpack_from("<H", data, offset)[0]
                 offset += 2 + id_list_size
 
-            # Read VolumeID offset from LinkInfo and navigate to it
+            # Read VolumeID and LocalBasePath offsets from LinkInfo
             volume_id_offset = struct.unpack_from("<I", data, offset + 12)[0]
+            local_base_path_offset = struct.unpack_from("<I", data, offset + 16)[0]
             vol = offset + volume_id_offset
 
-            # Read drive serial number and volume label from VolumeID
+            # Read drive type, serial number, and volume label from VolumeID
+            drive_type = DRIVE_TYPES.get(struct.unpack_from("<I", data, vol + 4)[0], "Unknown")
             drive_serial = f"{struct.unpack_from('<I', data, vol + 8)[0]:08X}"
             vol_label_offset = struct.unpack_from("<I", data, vol + 12)[0]
             label_start = vol + vol_label_offset
             label_end = data.index(b"\x00", label_start)
             volume_name = data[label_start:label_end].decode("ascii", errors="replace")
+
+            # Read target path from LocalBasePath
+            path_start = offset + local_base_path_offset
+            path_end = data.index(b"\x00", path_start)
+            target_path = data[path_start:path_end].decode("ascii", errors="replace")
 
             results.append({
                 "file": os.path.basename(lnk_file),
@@ -57,8 +73,10 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
                 "last_access_time": str(last_access_time),
                 "last_written_time": str(last_written_time),
                 "logical_file_size": logical_file_size,
+                "drive_type": drive_type,
                 "volume_serial_number": drive_serial,
                 "volume_name": volume_name,
+                "target_path": target_path,
             })
 
         except Exception as e:
