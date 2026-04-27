@@ -67,6 +67,65 @@ Superfetch is a related Windows service that remembers when and how often you ru
 
 ---
 
+## Binary Structure
+
+### Version Numbers
+
+The version field at offset 0 identifies which Windows version created the file:
+
+| Version Value | Windows Version |
+|---------------|----------------|
+| 17 | Windows XP / 2003 |
+| 23 | Windows Vista / 7 |
+| 26 | Windows 8 |
+| 30 | Windows 10 / 11 |
+
+> **Note:** Windows 8+ prefetch files are compressed using the Xpress Huffman algorithm and must be decompressed before the header can be read.
+
+---
+
+### File Header (Fixed Offsets)
+
+| Field | Offset | Size | Notes |
+|-------|--------|------|-------|
+| Version | 0 | 4 bytes (`<I`) | See version table above |
+| Signature | 4 | 4 bytes | Must be `SCCA` (`53 43 43 41`) — validates the file is a prefetch file |
+| File size | 12 | 4 bytes (`<I`) | Total size of the prefetch file |
+| Executable name | 16 | 60 bytes | UTF-16LE, null padded — name of the program that was executed |
+| Prefetch hash | 76 | 4 bytes (`<I`) | Hash of the executable's path — displayed as 8 character hex string |
+
+### Version-Specific Fields
+
+These fields vary in location depending on the version:
+
+| Field | Notes |
+|-------|-------|
+| Execution count | How many times the program was launched |
+| Last execution timestamp | FILETIME format — same conversion as LNK files (100-nanosecond intervals since 1601) |
+| Up to 8 execution timestamps | Available on Windows 8+ (version 26+) |
+| File references offset | Points to list of files accessed at launch |
+| Volume information offset | Points to volume name, serial number, and creation time |
+
+### Validation
+
+Before parsing any fields, always validate the signature:
+
+```python
+signature = data[4:8]
+if signature != b"SCCA":
+    raise ValueError("Not a valid prefetch file")
+```
+
+Then read the version to know which offsets to use for the variable fields:
+
+```python
+version = struct.unpack_from("<I", data, 0)[0]
+exe_name = data[16:76].decode("utf-16-le").rstrip("\x00")
+pf_hash = f"{struct.unpack_from('<I', data, 76)[0]:08X}"
+```
+
+---
+
 ## Reference
 
 - [MS-PFE: Prefetch File Format](https://github.com/libyal/libscca/blob/main/documentation/Windows%20Prefetch%20File%20(PF)%20format.asciidoc)

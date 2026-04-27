@@ -1,10 +1,9 @@
 import os
 import json
 import struct
-from datetime import datetime, timezone, timedelta
+from forensic_helpers import filetime_to_dt, format_file_size, extract_files
 
 username = os.getlogin()
-FILETIME_EPOCH = datetime(1601, 1, 1, tzinfo=timezone.utc)
 WIN_RECENT = os.path.join("C:\\", "Users", username, "AppData", "Roaming", "Microsoft", "Windows", "Recent")
 DRIVE_TYPES = {
     0: "Unknown",
@@ -36,9 +35,9 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
                 data = f.read()
 
             # Fixed-offset fields from the Shell Link Header
-            creation_time = FILETIME_EPOCH + timedelta(microseconds=struct.unpack_from("<Q", data, 28)[0] // 10)
-            last_access_time = FILETIME_EPOCH + timedelta(microseconds=struct.unpack_from("<Q", data, 36)[0] // 10)
-            last_written_time = FILETIME_EPOCH + timedelta(microseconds=struct.unpack_from("<Q", data, 44)[0] // 10)
+            creation_time = filetime_to_dt(struct.unpack_from("<Q", data, 28)[0])
+            last_access_time = filetime_to_dt(struct.unpack_from("<Q", data, 36)[0])
+            last_written_time = filetime_to_dt(struct.unpack_from("<Q", data, 44)[0])
             logical_file_size = format_file_size(struct.unpack_from("<I", data, 52)[0])
 
             # Navigate past IDList if present to reach LinkInfo
@@ -84,15 +83,8 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
     return results
 
 
-def file_extraction(path: str) -> list[str]:
-    """
-    Looks at the dir, takes files with .lnk file extension
-    """
-    return [os.path.join(path, f) for f in os.listdir(path) if f.lower().endswith(".lnk")]
-
-
 def main():
-    lnk_files = file_extraction(WIN_RECENT)
+    lnk_files = extract_files(WIN_RECENT, ".lnk")
     results = lnk_parser(lnk_files)
     with open("lnk_results.json", "w") as f:
         json.dump(results, f, indent=4)
