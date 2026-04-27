@@ -1,3 +1,4 @@
 construct
 python-evtx
 python-registry
+dissect.util

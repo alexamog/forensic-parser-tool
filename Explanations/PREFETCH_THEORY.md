@@ -78,7 +78,8 @@ The version field at offset 0 identifies which Windows version created the file:
 | 17 | Windows XP / 2003 |
 | 23 | Windows Vista / 7 |
 | 26 | Windows 8 |
-| 30 | Windows 10 / 11 |
+| 30 | Windows 10 |
+| 31 | Windows 11 |
 
 > **Note:** Windows 8+ prefetch files are compressed using the Xpress Huffman algorithm and must be decompressed before the header can be read.
 
@@ -86,25 +87,32 @@ The version field at offset 0 identifies which Windows version created the file:
 
 ### File Header (Fixed Offsets)
 
+These fields are at the same offset in all versions:
+
 | Field | Offset | Size | Notes |
 |-------|--------|------|-------|
 | Version | 0 | 4 bytes (`<I`) | See version table above |
 | Signature | 4 | 4 bytes | Must be `SCCA` (`53 43 43 41`) — validates the file is a prefetch file |
 | File size | 12 | 4 bytes (`<I`) | Total size of the prefetch file |
-| Executable name | 16 | 60 bytes | UTF-16LE, null padded — name of the program that was executed |
+| Executable name | 16 | 60 bytes (`utf-16-le`) | Name of the program that was executed, null padded |
 | Prefetch hash | 76 | 4 bytes (`<I`) | Hash of the executable's path — displayed as 8 character hex string |
 
 ### Version-Specific Fields
 
-These fields vary in location depending on the version:
+These fields vary in offset depending on the version. The offsets below apply to **version 30 and 31 (Windows 10 and 11)**:
 
-| Field | Notes |
-|-------|-------|
-| Execution count | How many times the program was launched |
-| Last execution timestamp | FILETIME format — same conversion as LNK files (100-nanosecond intervals since 1601) |
-| Up to 8 execution timestamps | Available on Windows 8+ (version 26+) |
-| File references offset | Points to list of files accessed at launch |
-| Volume information offset | Points to volume name, serial number, and creation time |
+| Field | Offset | Size | Notes |
+|-------|--------|------|-------|
+| Metrics array offset | 80 | 4 bytes (`<I`) | Points to file metrics array |
+| Metrics array count | 84 | 4 bytes (`<I`) | Number of entries in the metrics array |
+| Trace chain array offset | 88 | 4 bytes (`<I`) | Points to trace chain array |
+| Trace chain array count | 92 | 4 bytes (`<I`) | Number of entries in trace chain array |
+| Filename strings offset | 96 | 4 bytes (`<I`) | Points to list of files accessed at launch |
+| Filename strings size | 100 | 4 bytes (`<I`) | Size of filename strings block |
+| Volume information offset | 104 | 4 bytes (`<I`) | Points to volume name, serial number, and creation time |
+| Volume information count | 108 | 4 bytes (`<I`) | Number of volumes accessed |
+| Last run times | 128 | 8 bytes each (`<Q`) | Up to 8 FILETIME timestamps of the last 8 executions, stored sequentially. Most recent is first |
+| Execution count | 208 | 4 bytes (`<I`) | Total number of times the program was launched |
 
 ### Validation
 
