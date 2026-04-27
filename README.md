@@ -11,7 +11,7 @@ The goal of this project is to build parsers from the ground up — reading raw 
 | Artifact | Script | Theory |
 |----------|--------|--------|
 | LNK Files (Shell Link) | `lnk_file_parser.py` | [LNK_THEORY.md](Explanations/LNK_THEORY.md) |
-<!-- | Prefetch Files | `prefetch_parser.py` *(coming soon)* | [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) | -->
+| Prefetch Files | `prefetch_parser.py` | [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) |
 
 ---
 
@@ -37,3 +37,11 @@ python lnk_file_parser.py
 ```
 
 Results are written to `lnk_results.json`.
+
+```
+python prefetch_parser.py
+```
+
+Results are written to `prefetch_results.json`.
+
+> **Note:** `prefetch_parser.py` must be run as administrator — prefetch files are stored in `C:\Windows\Prefetch`, which requires elevated access.

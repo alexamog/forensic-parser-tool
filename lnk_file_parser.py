@@ -86,7 +86,8 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
 def main():
     lnk_files = extract_files(WIN_RECENT, ".lnk")
     results = lnk_parser(lnk_files)
-    with open("lnk_results.json", "w") as f:
+    os.makedirs("results", exist_ok=True)
+    with open(os.path.join("results", "lnk_results.json"), "w") as f:
         json.dump(results, f, indent=4)
 
 

@@ -9,8 +9,11 @@ def filetime_to_dt(filetime: int) -> str | None:
     """Convert a Windows FILETIME (100-nanosecond intervals since 1601) to an ISO 8601 UTC string."""
     if filetime == 0:
         return None
-    dt = FILETIME_EPOCH + timedelta(microseconds=filetime // 10)
-    return str(dt)
+    try:
+        dt = FILETIME_EPOCH + timedelta(microseconds=filetime // 10)
+        return str(dt)
+    except (OverflowError, ValueError):
+        return None
 
 
 def format_file_size(size_bytes: int) -> str:

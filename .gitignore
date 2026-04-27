@@ -156,7 +156,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-lnk_results
+# Results output
+results/
+
 # Spyder project settings
 .spyderproject
 .spyproject

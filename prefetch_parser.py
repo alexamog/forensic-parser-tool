@@ -1,8 +1,10 @@
 import os
+import json
 import ctypes
 import sys
 import struct
 from forensic_helpers import filetime_to_dt, format_file_size, extract_files
+
 
 def is_admin():
     try:
@@ -17,15 +19,14 @@ if not is_admin():
 
 PF_FILE_DIR = os.path.join("C:\\", "Windows", "Prefetch")
 
-
 WIN_VER = {
     17: "Windows XP",
-    23 : "Windows Vista/7",
+    23: "Windows Vista/7",
     26: "Windows 8",
     30: "Windows 10",
-    31: "Windows 11"
-
+    31: "Windows 11",
 }
+
 
 def decompress_prefetch(data: bytes) -> bytes:
     """
@@ -57,23 +58,62 @@ def decompress_prefetch(data: bytes) -> bytes:
     return decompressed.raw
 
 
+def parse_prefetch(data: bytes, filename: str) -> dict:
+    # Validate SCCA signature
+    if data[4:8] != b"SCCA":
+        raise ValueError("Not a valid prefetch file")
+
+    version_raw = struct.unpack_from("<I", data, 0)[0]
+    version = WIN_VER.get(version_raw, f"Unknown ({version_raw})")
+    exe_name = data[16:76].decode("utf-16-le").rstrip("\x00")
+    pf_hash = f"{struct.unpack_from('<I', data, 76)[0]:08X}"
+    file_size = format_file_size(struct.unpack_from("<I", data, 12)[0])
+    execution_count = struct.unpack_from("<I", data, 208)[0]
+
+    # Up to 8 last run timestamps stored sequentially at offset 128
+    last_run_times = []
+    for i in range(8):
+        filetime = struct.unpack_from("<Q", data, 128 + i * 8)[0]
+        dt = filetime_to_dt(filetime)
+        if dt:
+            last_run_times.append(dt)
+
+
+    return {
+        "file": filename,
+        "executable": exe_name,
+        "prefetch_hash": pf_hash,
+        "os_version": version,
+        "file_size": file_size,
+        "execution_count": execution_count,
+        "last_run_times": last_run_times,
+    }
+
+
 def prefetch_parser(pf_files: list[str]) -> list[dict]:
+    results = []
     for pf_file in pf_files:
         try:
             with open(pf_file, "rb") as f:
                 data = f.read()
 
-            # Decompress if MAM compressed (Windows 8+)
             if data[:3] == b"MAM":
                 data = decompress_prefetch(data)
-            print(f"OS ver: {WIN_VER[struct.unpack_from("<I", data, 0)[0]]}")
-            print(f"last run: {filetime_to_dt(struct.unpack_from("<Q", data, 128)[0])}")
+
+            results.append(parse_prefetch(data, os.path.basename(pf_file)))
 
         except Exception as e:
-            print(f"Failed to parse {pf_file}: {e}")
+            results.append({"file": pf_file, "error": str(e)})
+    return results
+
+
+def main():
+    pf_files = extract_files(PF_FILE_DIR, ".pf")
+    results = prefetch_parser(pf_files)
+    os.makedirs("results", exist_ok=True)
+    with open(os.path.join("results", "prefetch_results.json"), "w") as f:
+        json.dump(results, f, indent=4)
 
 
 if __name__ == "__main__":
-    is_admin()
-    pf_files = extract_files(PF_FILE_DIR, ".pf")
-    prefetch_parser(pf_files)
+    main()
