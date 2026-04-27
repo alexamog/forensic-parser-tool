@@ -26,7 +26,6 @@ The goal of this project is to build parsers from the ground up — reading raw 
 ## Requirements
 
 - Python 3.10+
-- No third-party libraries required (uses `struct` from the standard library)
 
 ---
 
