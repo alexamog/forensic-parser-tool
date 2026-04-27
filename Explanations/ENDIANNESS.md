@@ -1,6 +1,6 @@
 # Endianness
 
-Endianness is essential when manually inspecting raw hex in a hex editor or writing parsers, because it tells you the correct order to read multi-byte values — getting it wrong means misreading critical forensic evidence like volume serial numbers.
+Endianness is essential when manually inspecting raw hex in a hex editor or writing parsers, because it tells you the correct order to read multi-byte values.
 
 Endianness describes which end of a multi-byte number gets stored first in memory — either the big end or the little end.
 
@@ -14,8 +14,8 @@ Endianness describes which end of a multi-byte number gets stored first in memor
 
 ## Example Analogy — Writing the number 1,234
 
-- Normal (big-endian): `1 2 3 4` — most significant digit first
-- Reversed (little-endian): `4 3 2 1` — least significant digit first
+- Normal (big-endian): `1 2 3 4` most significant digit first
+- Reversed (little-endian): `4 3 2 1` least significant digit first
 
 ---
 
@@ -59,6 +59,6 @@ Read as little-endian (correct for Windows):
 `32 42 09 D0` → reverse → `D0 09 42 32` = `D0094232`
 
 Read as big-endian (incorrect):  
-`32 42 09 D0` = `32420900` — completely wrong value
+`32 42 09 D0` = `32420900` — incorrect value
 
 This would produce incorrect forensic evidence, which is why understanding endianness is fundamental to binary parsing.
