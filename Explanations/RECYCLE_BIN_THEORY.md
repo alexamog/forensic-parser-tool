@@ -2,13 +2,13 @@
 
 ## Why is the Recycle Bin important?
 
-When a user deletes a file in Windows, it is not immediately erased — it is moved to the Recycle Bin, a hidden system folder. Windows creates two files for each deleted item, one of which contains structured metadata about the deletion. This metadata survives even after the Recycle Bin is emptied and can be recovered from unallocated disk space, making the Recycle Bin a valuable source of evidence in any investigation involving file deletion.
+When a user deletes a file in Windows, it is not immediately erased, it is moved to the Recycle Bin, a hidden system folder. Windows creates two files for each deleted item, one of which contains structured metadata about the deletion. This metadata survives even after the Recycle Bin is emptied and can be recovered from unallocated disk space, making the Recycle Bin a valuable source of evidence in any investigation involving file deletion.
 
 The Recycle Bin is located at:
 
 - `C:\$Recycle.Bin\<SID>\`
 
-Each user on the system has their own subfolder named after their **Security Identifier (SID)** — the SID in the path directly identifies which user account performed the deletion.
+Each user on the system has their own subfolder named after their **Security Identifier (SID)**  the SID in the path directly identifies which user account performed the deletion.
 
 ---
 
@@ -22,8 +22,8 @@ When a file is moved to the Recycle Bin, Windows creates two files with a shared
 | `$I` + random suffix + original extension | Metadata: original path, file size, deletion timestamp |
 
 For example, deleting `report.xlsx` might produce:
-- `$RABCD123.xlsx` — the file's contents
-- `$IABCD123.xlsx` — the metadata record
+- `$RABCD123.xlsx`: the file's contents
+- `$IABCD123.xlsx`: the metadata record
 
 Both files are **live, active files** while the item sits in the Recycle Bin. Nothing has been erased at this point — the files have simply been moved to a hidden system folder and renamed.
 
