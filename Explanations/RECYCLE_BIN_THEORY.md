@@ -39,7 +39,7 @@ This is different from **FAT** filesystems, where deletion marks the first byte 
 
 ---
 
-## SID and RID — identifying who deleted the file
+## SID and RID: identifying who deleted the file
 
 Each user on the system has their own Recycle Bin subfolder named after their **Security Identifier (SID)**. A full SID looks like this:
 
