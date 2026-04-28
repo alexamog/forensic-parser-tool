@@ -103,16 +103,45 @@ This is a critical distinction in modern investigations. An SSD with TRIM enable
 
 ---
 
+## Linking $I and $R files
+
+The $I and $R files for the same deleted item share an identical random suffix. This suffix is the only way to associate them:
+
+```
+$I ABCD123 .xlsx   ←— metadata
+$R ABCD123 .xlsx   ←— file contents
+```
+
+If a user deletes the same file multiple times, each deletion produces a new $I/$R pair with a different random suffix. Multiple $I files pointing to the same original path are forensically significant — they show a pattern of repeated deletion.
+
+---
+
 ## Binary structure of the $I file
 
-The $I file is small and has a simple fixed-offset structure:
+The first three fields are identical across all versions. The path field differs between version 1 and version 2 — this is the most important structural distinction to be aware of when writing a parser.
+
+### Shared fields (all versions)
 
 | Field | Offset | Size | Notes |
 |-------|--------|------|-------|
 | Version | 0 | 8 bytes (`<Q`) | `0x01` = Vista/7/8, `0x02` = Windows 10+ |
 | Original file size | 8 | 8 bytes (`<Q`) | Size of the deleted file in bytes |
 | Deletion timestamp | 16 | 8 bytes (`<Q`) | Windows FILETIME |
+
+### Version 1 (Vista / 7 / 8) — path from offset 24
+
+| Field | Offset | Size | Notes |
+|-------|--------|------|-------|
 | Original file path | 24 | variable | Null-terminated UTF-16LE string |
+
+### Version 2 (Windows 10+) — path from offset 28
+
+| Field | Offset | Size | Notes |
+|-------|--------|------|-------|
+| File name length | 24 | 4 bytes (`<I`) | Number of characters in the path string |
+| Original file path | 28 | variable | UTF-16LE string, **not** null-terminated — use the length field instead |
+
+> **This is a common parser bug.** On a Windows 10/11 machine, all $I files are version 2. If you read the path starting at offset 24 without checking the version first, you are reading the 4-byte length field as the beginning of the string and will get garbage output. Always read the version first and branch accordingly.
 
 ### Validation
 
@@ -127,9 +156,17 @@ if version not in (1, 2):
 ### Reading the original path
 
 ```python
-path_data = data[24:]
-null_pos = path_data.find(b"\x00\x00")
-original_path = path_data[:null_pos].decode("utf-16-le")
+if version == 1:
+    path_data = data[24:]
+    i = 0
+    while i < len(path_data) - 1:
+        if path_data[i] == 0 and path_data[i + 1] == 0:
+            break
+        i += 2
+    original_path = path_data[:i].decode("utf-16-le")
+else:
+    char_count = struct.unpack_from("<I", data, 24)[0]
+    original_path = data[28:28 + char_count * 2].decode("utf-16-le")
 ```
 
 ---

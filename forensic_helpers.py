@@ -28,6 +28,10 @@ def format_file_size(size_bytes: int) -> str:
         return f"{size_bytes / 1024 ** 3:.2f} GB"
 
 
-def extract_files(path: str, extension: str) -> list[str]:
-    """Return a list of files in a directory matching the given extension."""
-    return [os.path.join(path, f) for f in os.listdir(path) if f.lower().endswith(extension)]
+def extract_files(path: str, extension: str = "", prefix: str = "") -> list[str]:
+    """Return a list of files in a directory matching the given extension and/or prefix."""
+    return [
+        os.path.join(path, f) for f in os.listdir(path)
+        if (not extension or f.lower().endswith(extension))
+        and (not prefix or f.lower().startswith(prefix.lower()))
+    ]
