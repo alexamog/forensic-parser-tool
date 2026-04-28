@@ -28,21 +28,31 @@ The goal of this project is to build parsers from the ground up - reading raw bi
 ## Requirements
 
 - Python 3.10+
+- Windows OS (parsers rely on Windows-specific paths and APIs)
+- Administrator privileges required for `prefetch_parser.py`
 
 ---
 
 ## Usage
 
+All results are written to the `results/` folder.
+
 ```
 python lnk_file_parser.py
 ```
 
-Results are written to `lnk_results.json`.
+Results are written to `results/lnk_results.json`.
 
 ```
 python prefetch_parser.py
 ```
 
-Results are written to `prefetch_results.json`.
+Results are written to `results/prefetch_results.json`.
 
 > **Note:** `prefetch_parser.py` must be run as administrator - prefetch files are stored in `C:\Windows\Prefetch`, which requires elevated access.
+
+```
+python recycle_bin_parser.py
+```
+
+Results are written to `results/recycle_bin_results.json`.
