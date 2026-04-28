@@ -29,7 +29,7 @@ The goal of this project is to build parsers from the ground up - reading raw bi
 
 - Python 3.10+
 - Windows OS (parsers rely on Windows-specific paths and APIs)
-- Administrator privileges required for `prefetch_parser.py`
+- Administrator privileges required for `prefetch_parser.py` and `recycle_bin_parser.py`
 
 ---
 
