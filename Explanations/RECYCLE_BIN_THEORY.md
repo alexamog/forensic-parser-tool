@@ -53,8 +53,8 @@ S-1-5-21-1234567890-987654321-1122334455-1000
 | `1` | Revision level (always 1) |
 | `5` | Identifier authority (5 = NT Authority) |
 | `21` | Indicates a domain or local machine account |
-| `1234567890-987654321-1122334455` | Sub-authority values — unique to the machine or domain |
-| `1000` | **RID (Relative Identifier)** — identifies the specific account |
+| `1234567890-987654321-1122334455` | Sub-authority values - unique to the machine or domain |
+| `1000` | **RID (Relative Identifier)** - identifies the specific account |
 
 The **RID** is the last segment and the only part that differs between accounts on the same machine. Some RIDs are well-known:
 
@@ -66,16 +66,16 @@ The **RID** is the last segment and the only part that differs between accounts 
 | `504` | WDAGUtilityAccount (Windows Defender Application Guard) |
 | `1000`+ | Standard user accounts created on the machine |
 
-**Forensic relevance:** A deletion path of `C:\$Recycle.Bin\S-1-5-21-...-500\` means the built-in Administrator account performed the deletion — significant if a suspect claimed not to have admin access. Standard user accounts will show a RID of 1000 or above. If multiple SID subfolders exist under `$Recycle.Bin`, multiple user accounts have deleted files, and each $I file can be attributed to a specific account by its parent folder.
+**Forensic relevance:** A deletion path of `C:\$Recycle.Bin\S-1-5-21-...-500\` means the built-in Administrator account performed the deletion - significant if a suspect claimed not to have admin access. Standard user accounts will show a RID of 1000 or above. If multiple SID subfolders exist under `$Recycle.Bin`, multiple user accounts have deleted files, and each $I file can be attributed to a specific account by its parent folder.
 
 ---
 
 ## Key forensic fields
 
-- **Original file path** — the full path before deletion, including drive letter. If the path references a USB drive letter (e.g. `E:\`) or a network path, that is forensically significant — it can indicate data being brought in or taken out on a removable device
-- **Deletion timestamp** — when the file was moved to the Recycle Bin, not when the Recycle Bin was emptied
-- **Original file size** — can be used to corroborate other evidence or identify the file even if the data is gone
-- **SID and RID (from folder path)** — identifies which user account performed the deletion; the RID alone can reveal whether it was a standard user or the built-in Administrator
+- **Original file path** - the full path before deletion, including drive letter. If the path references a USB drive letter (e.g. `E:\`) or a network path, that is forensically significant - it can indicate data being brought in or taken out on a removable device
+- **Deletion timestamp** - when the file was moved to the Recycle Bin, not when the Recycle Bin was emptied
+- **Original file size** - can be used to corroborate other evidence or identify the file even if the data is gone
+- **SID and RID (from folder path)** - identifies which user account performed the deletion; the RID alone can reveal whether it was a standard user or the built-in Administrator
 
 ---
 
@@ -85,7 +85,7 @@ The **RID** is the last segment and the only part that differs between accounts 
 A file appearing in the Recycle Bin metadata confirms the user chose to delete it. Combined with an LNK file showing prior access and a Prefetch entry showing program execution, you can build a complete before-and-after timeline.
 
 **Detecting data exfiltration**
-If the original path in a $I file references a removable drive (e.g. `E:\confidential_data.xlsx`), it proves the file existed on an external device — even if that device is no longer available.
+If the original path in a $I file references a removable drive (e.g. `E:\confidential_data.xlsx`), it proves the file existed on an external device - even if that device is no longer available.
 
 **Anti-forensics detection**
 A user who empties the Recycle Bin expecting to destroy evidence may not realise that $I records can survive in unallocated space. The deletion timestamp in a recovered $I file may directly contradict a suspect's account of events.
@@ -108,17 +108,17 @@ This is a critical distinction in modern investigations. An SSD with TRIM enable
 The $I and $R files for the same deleted item share an identical random suffix. This suffix is the only way to associate them:
 
 ```
-$I ABCD123 .xlsx   ←— metadata
-$R ABCD123 .xlsx   ←— file contents
+$I ABCD123 .xlsx   ←- metadata
+$R ABCD123 .xlsx   ←- file contents
 ```
 
-If a user deletes the same file multiple times, each deletion produces a new $I/$R pair with a different random suffix. Multiple $I files pointing to the same original path are forensically significant — they show a pattern of repeated deletion.
+If a user deletes the same file multiple times, each deletion produces a new $I/$R pair with a different random suffix. Multiple $I files pointing to the same original path are forensically significant - they show a pattern of repeated deletion.
 
 ---
 
 ## Binary structure of the $I file
 
-The first three fields are identical across all versions. The path field differs between version 1 and version 2 — this is the most important structural distinction to be aware of when writing a parser.
+The first three fields are identical across all versions. The path field differs between version 1 and version 2 - this is the most important structural distinction to be aware of when writing a parser.
 
 ### Shared fields (all versions)
 
@@ -128,18 +128,18 @@ The first three fields are identical across all versions. The path field differs
 | Original file size | 8 | 8 bytes (`<Q`) | Size of the deleted file in bytes |
 | Deletion timestamp | 16 | 8 bytes (`<Q`) | Windows FILETIME |
 
-### Version 1 (Vista / 7 / 8) — path from offset 24
+### Version 1 (Vista / 7 / 8) - path from offset 24
 
 | Field | Offset | Size | Notes |
 |-------|--------|------|-------|
 | Original file path | 24 | variable | Null-terminated UTF-16LE string |
 
-### Version 2 (Windows 10+) — path from offset 28
+### Version 2 (Windows 10+) - path from offset 28
 
 | Field | Offset | Size | Notes |
 |-------|--------|------|-------|
 | File name length | 24 | 4 bytes (`<I`) | Number of characters in the path string |
-| Original file path | 28 | variable | UTF-16LE string, **not** null-terminated — use the length field instead |
+| Original file path | 28 | variable | UTF-16LE string, **not** null-terminated - use the length field instead |
 
 > **This is a common parser bug.** On a Windows 10/11 machine, all $I files are version 2. If you read the path starting at offset 24 without checking the version first, you are reading the 4-byte length field as the beginning of the string and will get garbage output. Always read the version first and branch accordingly.
 
@@ -173,5 +173,5 @@ else:
 
 ## Reference
 
-- [Recycle Bin $I file format — ForensicsWiki](https://forensicswiki.xyz/page/Windows#Recycle_Bin)
-- [librecycle — open source $I/$R parser](https://github.com/libyal/libregf)
+- [Recycle Bin $I file format - ForensicsWiki](https://forensicswiki.xyz/page/Windows#Recycle_Bin)
+- [librecycle - open source $I/$R parser](https://github.com/libyal/libregf)

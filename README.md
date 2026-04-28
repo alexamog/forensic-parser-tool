@@ -2,7 +2,7 @@
 
 A growing collection of Python scripts for parsing Windows forensic artifacts. Each tool extracts forensically relevant metadata from a specific artifact type, outputs results to JSON, and is accompanied by a theory document explaining the artifact and its investigative value.
 
-The goal of this project is to build parsers from the ground up — reading raw binary directly using Python's `struct` module rather than relying on third-party libraries — in order to develop a deep understanding of the underlying file formats.
+The goal of this project is to build parsers from the ground up - reading raw binary directly using Python's `struct` module rather than relying on third-party libraries - in order to develop a deep understanding of the underlying file formats.
 
 ---
 
@@ -18,10 +18,10 @@ The goal of this project is to build parsers from the ground up — reading raw 
 
 ## Supporting Documentation
 
-- [LNK_THEORY.md](Explanations/LNK_THEORY.md) — What LNK files are, their forensic value, and how they are structured
-- [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) — What prefetch files are, their forensic value, and how they are structured
-- [RECYCLE_BIN_THEORY.md](Explanations/RECYCLE_BIN_THEORY.md) — What Recycle Bin $I files are, their forensic value, and how they are structured
-- [ENDIANNESS.md](Explanations/ENDIANNESS.md) — Explanation of endianness and why it matters when parsing Windows binary formats
+- [LNK_THEORY.md](Explanations/LNK_THEORY.md) - What LNK files are, their forensic value, and how they are structured
+- [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) - What prefetch files are, their forensic value, and how they are structured
+- [RECYCLE_BIN_THEORY.md](Explanations/RECYCLE_BIN_THEORY.md) - What Recycle Bin $I files are, their forensic value, and how they are structured
+- [ENDIANNESS.md](Explanations/ENDIANNESS.md) - Explanation of endianness and why it matters when parsing Windows binary formats
 
 ---
 
@@ -45,4 +45,4 @@ python prefetch_parser.py
 
 Results are written to `prefetch_results.json`.
 
-> **Note:** `prefetch_parser.py` must be run as administrator — prefetch files are stored in `C:\Windows\Prefetch`, which requires elevated access.
+> **Note:** `prefetch_parser.py` must be run as administrator - prefetch files are stored in `C:\Windows\Prefetch`, which requires elevated access.
