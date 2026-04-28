@@ -25,9 +25,9 @@ For example, deleting `report.xlsx` might produce:
 - `$RABCD123.xlsx`: the file's contents
 - `$IABCD123.xlsx`: the metadata record
 
-Both files are **live, active files** while the item sits in the Recycle Bin. Nothing has been erased at this point — the files have simply been moved to a hidden system folder and renamed.
+Both files are **live, active files** while the item sits in the Recycle Bin. Nothing has been erased at this point the files have simply been moved to a hidden system folder and renamed.
 
-When the user **empties the Recycle Bin**, both files are deleted. Their NTFS MFT records are marked as unallocated and the clusters are freed. However, the $I metadata records are small and frequently **recoverable from unallocated space** even long after emptying. This is where their forensic value is greatest — even if the $R file's data has been overwritten, a recovered $I file can still prove the original path, size, and deletion time.
+When the user **empties the Recycle Bin**, both files are deleted. Their NTFS MFT records are marked as unallocated and the clusters are freed. However, the $I metadata records are small and frequently **recoverable from unallocated space** even long after emptying. This is where their forensic value is greatest even if the $R file's data has been overwritten, a recovered $I file can still prove the original path, size, and deletion time.
 
 ---
 
