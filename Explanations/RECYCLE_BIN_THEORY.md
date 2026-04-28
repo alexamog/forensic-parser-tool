@@ -168,10 +168,3 @@ else:
     char_count = struct.unpack_from("<I", data, 24)[0]
     original_path = data[28:28 + char_count * 2].decode("utf-16-le")
 ```
-
----
-
-## Reference
-
-- [Recycle Bin $I file format - ForensicsWiki](https://forensicswiki.xyz/page/Windows#Recycle_Bin)
-- [librecycle - open source $I/$R parser](https://github.com/libyal/libregf)
