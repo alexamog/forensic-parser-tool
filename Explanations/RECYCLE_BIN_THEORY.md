@@ -39,12 +39,43 @@ This is different from **FAT** filesystems, where deletion marks the first byte 
 
 ---
 
+## SID and RID — identifying who deleted the file
+
+Each user on the system has their own Recycle Bin subfolder named after their **Security Identifier (SID)**. A full SID looks like this:
+
+```
+S-1-5-21-1234567890-987654321-1122334455-1000
+```
+
+| Part | Meaning |
+|------|---------|
+| `S` | Identifies the string as a SID |
+| `1` | Revision level (always 1) |
+| `5` | Identifier authority (5 = NT Authority) |
+| `21` | Indicates a domain or local machine account |
+| `1234567890-987654321-1122334455` | Sub-authority values — unique to the machine or domain |
+| `1000` | **RID (Relative Identifier)** — identifies the specific account |
+
+The **RID** is the last segment and the only part that differs between accounts on the same machine. Some RIDs are well-known:
+
+| RID | Account |
+|-----|---------|
+| `500` | Built-in Administrator |
+| `501` | Guest |
+| `503` | DefaultAccount |
+| `504` | WDAGUtilityAccount (Windows Defender Application Guard) |
+| `1000`+ | Standard user accounts created on the machine |
+
+**Forensic relevance:** A deletion path of `C:\$Recycle.Bin\S-1-5-21-...-500\` means the built-in Administrator account performed the deletion — significant if a suspect claimed not to have admin access. Standard user accounts will show a RID of 1000 or above. If multiple SID subfolders exist under `$Recycle.Bin`, multiple user accounts have deleted files, and each $I file can be attributed to a specific account by its parent folder.
+
+---
+
 ## Key forensic fields
 
 - **Original file path** — the full path before deletion, including drive letter. If the path references a USB drive letter (e.g. `E:\`) or a network path, that is forensically significant — it can indicate data being brought in or taken out on a removable device
 - **Deletion timestamp** — when the file was moved to the Recycle Bin, not when the Recycle Bin was emptied
 - **Original file size** — can be used to corroborate other evidence or identify the file even if the data is gone
-- **SID (from folder path)** — identifies which user account performed the deletion
+- **SID and RID (from folder path)** — identifies which user account performed the deletion; the RID alone can reveal whether it was a standard user or the built-in Administrator
 
 ---
 
