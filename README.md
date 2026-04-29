@@ -38,6 +38,18 @@ The goal of this project is to build parsers from the ground up - reading raw bi
 
 ## Usage
 
+### Running via the menu (recommended)
+
+The easiest way to run the tools is through the interactive menu:
+
+```
+python app.py
+```
+
+This presents a numbered menu to select which parser to run. Parsers that require administrator privileges will prompt accordingly when selected.
+
+### Running individual parsers
+
 All results are written to the `results/` folder.
 
 ```
