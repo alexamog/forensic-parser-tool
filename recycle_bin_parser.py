@@ -3,8 +3,6 @@ import json
 import struct
 from forensic_helpers import filetime_to_dt, format_file_size, extract_files, require_admin
 
-require_admin()
-
 BIN_DIR = os.path.join("C:\\", "$Recycle.Bin")
 
 WIN_VER = {
@@ -62,6 +60,7 @@ def recycle_bin_parser(sid_dirs: list[str]) -> list[dict]:
 
 
 def main():
+    require_admin()
     sid_dirs = [
         os.path.join(BIN_DIR, f) for f in os.listdir(BIN_DIR)
         if f.startswith("S-") and os.path.isdir(os.path.join(BIN_DIR, f))

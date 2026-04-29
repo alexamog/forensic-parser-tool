@@ -4,8 +4,6 @@ import ctypes
 import struct
 from forensic_helpers import filetime_to_dt, format_file_size, extract_files, require_admin
 
-require_admin()
-
 PF_FILE_DIR = os.path.join("C:\\", "Windows", "Prefetch")
 
 WIN_VER = {
@@ -96,6 +94,7 @@ def prefetch_parser(pf_files: list[str]) -> list[dict]:
 
 
 def main():
+    require_admin()
     pf_files = extract_files(PF_FILE_DIR, ".pf")
     results = prefetch_parser(pf_files)
     os.makedirs("results", exist_ok=True)
