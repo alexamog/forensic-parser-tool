@@ -67,7 +67,6 @@ def parse_prefetch(data: bytes, filename: str) -> dict:
         if dt:
             last_run_times.append(dt)
 
-
     return {
         "file": filename,
         "executable": exe_name,

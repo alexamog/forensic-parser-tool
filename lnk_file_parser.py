@@ -16,7 +16,6 @@ DRIVE_TYPES = {
 }
 
 
-
 def lnk_parser(lnk_files: list[str]) -> list[dict]:
     results = []
     for lnk_file in lnk_files:

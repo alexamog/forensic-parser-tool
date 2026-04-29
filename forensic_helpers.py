@@ -1,6 +1,5 @@
 import os
 import sys
-import struct
 import ctypes
 from datetime import datetime, timezone, timedelta
 
