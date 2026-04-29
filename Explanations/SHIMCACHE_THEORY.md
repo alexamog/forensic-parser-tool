@@ -247,9 +247,3 @@ Prefetch file for suspicious.exe          - confirms execution, shows run count 
 If only Shimcache is present with no Amcache or Prefetch entry, the file may have been placed on the system but never run. If Amcache is present but Prefetch is missing, the Prefetch file may have been deleted - but Amcache still proves execution and provides the hash.
 
 ---
-
-## Reference
-
-- [AppCompatCache - DFIR.Training](https://www.dfir.training/windows/shimcache)
-- [Amcache - DFIR.Training](https://www.dfir.training/windows/amcache)
-- [libscca - Joachim Metz](https://github.com/libyal/libscca)
