@@ -13,8 +13,7 @@ The goal of this project is to build parsers from the ground up - reading raw bi
 | LNK Files (Shell Link) | `lnk_file_parser.py` | [LNK_THEORY.md](Explanations/LNK_THEORY.md) |
 | Prefetch Files | `prefetch_parser.py` | [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) |
 | Recycle Bin (`$I` files) | `recycle_bin_parser.py` | [RECYCLE_BIN_THEORY.md](Explanations/RECYCLE_BIN_THEORY.md) |
-| Shimcache (AppCompatCache) | `shimcache_parser.py` | [SHIMCACHE_THEORY.md](Explanations/SHIMCACHE_THEORY.md) |
-| Amcache | `amcache_parser.py` | [SHIMCACHE_THEORY.md](Explanations/SHIMCACHE_THEORY.md) |
+| Shimcache (AppCompatCache) and Amcache | `N/A` | [SHIMCACHE_THEORY.md](Explanations/SHIMCACHE_THEORY.md) |
 
 ---
 
