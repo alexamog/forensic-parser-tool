@@ -34,6 +34,9 @@ def parse_i_file(metadata_file: str, sid: str) -> dict:
         char_count = struct.unpack_from('<I', data, 24)[0]
         original_path = data[28:28 + char_count * 2].decode("utf-16-le")
 
+    r_filename = "$R" + os.path.basename(metadata_file)[2:]
+    r_file_present = os.path.exists(os.path.join(os.path.dirname(metadata_file), r_filename))
+
     return {
         "file": os.path.basename(metadata_file),
         "sid": sid,
@@ -41,6 +44,7 @@ def parse_i_file(metadata_file: str, sid: str) -> dict:
         "original_path": original_path,
         "original_file_size": logical_file_size,
         "deletion_timestamp": deletion_timestamp,
+        "r_file_present": r_file_present,
     }
 
 
