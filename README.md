@@ -13,6 +13,8 @@ The goal of this project is to build parsers from the ground up - reading raw bi
 | LNK Files (Shell Link) | `lnk_file_parser.py` | [LNK_THEORY.md](Explanations/LNK_THEORY.md) |
 | Prefetch Files | `prefetch_parser.py` | [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) |
 | Recycle Bin (`$I` files) | `recycle_bin_parser.py` | [RECYCLE_BIN_THEORY.md](Explanations/RECYCLE_BIN_THEORY.md) |
+| Shimcache (AppCompatCache) | `shimcache_parser.py` | [SHIMCACHE_THEORY.md](Explanations/SHIMCACHE_THEORY.md) |
+| Amcache | `amcache_parser.py` | [SHIMCACHE_THEORY.md](Explanations/SHIMCACHE_THEORY.md) |
 
 ---
 
@@ -21,6 +23,7 @@ The goal of this project is to build parsers from the ground up - reading raw bi
 - [LNK_THEORY.md](Explanations/LNK_THEORY.md) - What LNK files are, their forensic value, and how they are structured
 - [PREFETCH_THEORY.md](Explanations/PREFETCH_THEORY.md) - What prefetch files are, their forensic value, and how they are structured
 - [RECYCLE_BIN_THEORY.md](Explanations/RECYCLE_BIN_THEORY.md) - What Recycle Bin $I files are, their forensic value, and how they are structured
+- [SHIMCACHE_THEORY.md](Explanations/SHIMCACHE_THEORY.md) - What Shimcache and Amcache are, their forensic value, how they differ, and how they are structured
 - [ENDIANNESS.md](Explanations/ENDIANNESS.md) - Explanation of endianness and why it matters when parsing Windows binary formats
 
 ---
