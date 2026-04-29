@@ -97,41 +97,59 @@ This returns the raw binary value which is then parsed with `struct` the same wa
 
 ## Binary structure (Windows 10/11)
 
-The raw value begins with a 128-byte header, followed by a sequence of entries. Each entry begins with a signature that marks the start of that entry.
+The raw value begins with a header, followed by a sequence of entries. The first 4 bytes of the raw value contain the offset to the first entry, so the header size is not hardcoded - it is read directly from the data.
 
 ### Header
 
 | Field | Offset | Size | Notes |
 |-------|--------|------|-------|
-| Cache entries start | 0 | 128 bytes | Header - entries begin immediately after |
+| Offset to first entry | 0 | 4 bytes (`<I`) | Points to where the first `10ts` entry begins. Typically 0x34 (52) on Windows 10 1709+ and Windows 11 |
 
 ### Entry structure
 
-Each entry starts with the signature `10ts` (`0x74733031` in little-endian):
+Each entry starts with the signature `10ts` (bytes `0x31 0x30 0x74 0x73`):
 
-| Field | Offset | Size | Notes |
-|-------|--------|------|-------|
-| Signature | 0 | 4 bytes | `10ts` - marks start of entry |
-| Unknown | 4 | 4 bytes | |
-| Data length | 8 | 4 bytes (`<I`) | Length of remaining entry data in bytes |
+| Field | Entry offset | Size | Notes |
+|-------|-------------|------|-------|
+| Signature | 0 | 4 bytes | `10ts` - confirms start of a valid entry |
+| Unknown | 4 | 4 bytes | Purpose unknown, skipped |
+| ceDataSize | 8 | 4 bytes (`<I`) | Total size of the entry body after the 12-byte header |
 | Path length | 12 | 2 bytes (`<H`) | Length of the path string in bytes |
-| Path | 14 | variable | UTF-16LE string, length determined by path length field |
+| Path | 14 | variable | UTF-16LE string, not null-terminated |
+| Last modified time | 14 + path_length | 8 bytes (`<Q`) | Windows FILETIME - last modified time of the executable |
+| Data size | 22 + path_length | 4 bytes (`<I`) | Length of the trailing data blob |
+| Data blob | 26 + path_length | variable | Binary data - last 4 bytes indicate execution (1 = executed, 0 = not executed) |
+
+### Navigating to the next entry
+
+The correct formula to move to the next entry is:
+
+```
+next_entry_offset = current_offset + 26 + path_length + data_size
+```
+
+The 26 accounts for all fixed fields in the entry (4 + 4 + 4 + 2 + 8 + 4), then `path_length` and `data_size` account for the two variable-length sections.
 
 ### Parsing approach
 
-Since entries are variable length, the parser must walk through the raw data looking for the `10ts` signature to find the start of each entry, then use the data length field to skip to the next one.
-
 ```python
-ENTRY_SIGNATURE = b"10ts"
-offset = 128  # skip header
+import struct
 
-while offset < len(data) - 4:
-    if data[offset:offset + 4] != ENTRY_SIGNATURE:
+ENTRY_SIGNATURE = b"10ts"
+
+# Read the offset to the first entry from the first 4 bytes
+entry_offset = struct.unpack_from("<I", data, 0)[0]
+
+while entry_offset < len(data) - 4:
+    if data[entry_offset:entry_offset + 4] != ENTRY_SIGNATURE:
         break
-    data_length = struct.unpack_from("<I", data, offset + 8)[0]
-    path_length = struct.unpack_from("<H", data, offset + 12)[0]
-    path = data[offset + 14:offset + 14 + path_length].decode("utf-16-le")
-    offset += 14 + data_length
+
+    path_length = struct.unpack_from("<H", data, entry_offset + 12)[0]
+    path = data[entry_offset + 14:entry_offset + 14 + path_length].decode("utf-16-le")
+    last_modified = struct.unpack_from("<Q", data, entry_offset + 14 + path_length)[0]
+    data_size = struct.unpack_from("<I", data, entry_offset + 22 + path_length)[0]
+
+    entry_offset += 26 + path_length + data_size
 ```
 
 ---
