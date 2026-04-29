@@ -1,21 +1,10 @@
 import os
 import json
 import ctypes
-import sys
 import struct
-from forensic_helpers import filetime_to_dt, format_file_size, extract_files
+from forensic_helpers import filetime_to_dt, format_file_size, extract_files, require_admin
 
-
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
-
-if not is_admin():
-    print("Error: This script must be run as administrator.")
-    sys.exit(1)
+require_admin()
 
 PF_FILE_DIR = os.path.join("C:\\", "Windows", "Prefetch")
 
@@ -113,6 +102,7 @@ def main():
     os.makedirs("results", exist_ok=True)
     with open(os.path.join("results", "prefetch_results.json"), "w") as f:
         json.dump(results, f, indent=4)
+    print("Results saved to: results/prefetch_results.json")
 
 
 if __name__ == "__main__":

@@ -56,3 +56,5 @@ python recycle_bin_parser.py
 ```
 
 Results are written to `results/recycle_bin_results.json`.
+
+> **Note:** `recycle_bin_parser.py` must be run as administrator - `C:\$Recycle.Bin` requires elevated access.

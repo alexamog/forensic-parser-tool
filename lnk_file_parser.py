@@ -79,6 +79,7 @@ def main():
     os.makedirs("results", exist_ok=True)
     with open(os.path.join("results", "lnk_results.json"), "w") as f:
         json.dump(results, f, indent=4)
+    print("Results saved to: results/lnk_results.json")
 
 
 if __name__ == "__main__":

@@ -1,8 +1,25 @@
 import os
+import sys
 import struct
+import ctypes
 from datetime import datetime, timezone, timedelta
 
 FILETIME_EPOCH = datetime(1601, 1, 1, tzinfo=timezone.utc)
+
+
+def is_admin() -> bool:
+    """Check if the script is running with administrator privileges."""
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+
+def require_admin():
+    """Exit with an error message if not running as administrator."""
+    if not is_admin():
+        print("Error: This script must be run as administrator.")
+        sys.exit(1)
 
 
 def filetime_to_dt(filetime: int) -> str | None:
