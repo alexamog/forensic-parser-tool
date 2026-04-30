@@ -61,9 +61,9 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
 
             results.append({
                 "file": os.path.basename(lnk_file),
-                "creation_time": str(creation_time),
-                "last_access_time": str(last_access_time),
-                "last_written_time": str(last_written_time),
+                "creation_time": creation_time,
+                "last_access_time": last_access_time,
+                "last_written_time": last_written_time,
                 "logical_file_size": logical_file_size,
                 "drive_type": drive_type,
                 "volume_serial_number": volume_serial,

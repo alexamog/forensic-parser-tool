@@ -46,7 +46,7 @@ def format_file_size(size_bytes: int) -> str:
 
 def is_valid_timestamp(ts: str | None) -> bool:
     """Return True if the timestamp is present and not a known placeholder value."""
-    if not ts or ts == "None":
+    if not ts:
         return False
     if ts.startswith("1980-01-01"):
         return False
