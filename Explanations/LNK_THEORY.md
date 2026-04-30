@@ -30,6 +30,23 @@ They can be found in the following paths:
 
 ---
 
+## The HasLinkInfo flag
+
+Not all LNK files contain a LinkInfo block. Windows creates minimal LNK files for certain system shortcuts — such as screen clips, virtual drives, or shell namespace items — that only contain the Shell Link Header and no LinkInfo section.
+
+Bit 1 of the LinkFlags field at offset 20 is the `HasLinkInfo` flag. If this bit is not set, the file has no LinkInfo block and fields 5-8 in the table above will not be present. Attempting to read them anyway will cause a buffer overflow error.
+
+Always check this flag before navigating to LinkInfo:
+
+```python
+link_flags = struct.unpack_from("<I", data, 20)[0]
+has_link_info = bool(link_flags & 0x2)
+```
+
+If `has_link_info` is False, the timestamps from the Shell Link Header (fields 1-4) are still valid and forensically useful — only the volume and path fields will be absent.
+
+---
+
 ## Why navigate via LinkInfo rather than searching for landmarks
 
 Fields 5-8 sit at variable positions in the file. A naive approach is to search for the byte sequence `10 00 00 00` as a landmark, but this is unreliable because that sequence is not unique - it can appear elsewhere in the file as part of other data, causing the parser to read from the wrong position entirely.
