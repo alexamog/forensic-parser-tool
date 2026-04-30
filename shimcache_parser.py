@@ -12,7 +12,7 @@ def shimcache_parser():
     key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path)
     raw_data, _ = winreg.QueryValueEx(key, "AppCompatCache")
     for data in raw_data:
-        print(data)
+        struct.unpack_from("<I", data, 0)[0]
 
 
 def main():

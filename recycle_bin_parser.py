@@ -69,7 +69,9 @@ def main():
     os.makedirs("results", exist_ok=True)
     with open(os.path.join("results", "recycle_bin_results.json"), "w") as f:
         json.dump(results, f, indent=4)
-    print("Results saved to: results/recycle_bin_results.json")
+    parsed = sum(1 for r in results if "error" not in r)
+    errors = sum(1 for r in results if "error" in r)
+    print(f"Parsed {parsed} entries, {errors} errors. Results saved to: results/recycle_bin_results.json")
 
 
 if __name__ == "__main__":

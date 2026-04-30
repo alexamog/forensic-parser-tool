@@ -23,27 +23,32 @@ def main():
         print(MENU)
         choice = input("Select a parser: ").strip()
 
-        if choice == "1":
-            from lnk_file_parser import main as run
-            run()
-        elif choice == "2":
-            from prefetch_parser import main as run
-            run()
-        elif choice == "3":
-            from recycle_bin_parser import main as run
-            run()
-        elif choice == "4":
-            print("\nShimcache parser coming soon.")
-        elif choice == "5":
-            print("\nAmcache parser coming soon.")
-        elif choice == "6":
-            from timeline_correlator import main as run
-            run()
-        elif choice == "0":
-            print("\nExiting.")
-            sys.exit(0)
-        else:
-            print("\nInvalid choice. Please enter a number from the menu.")
+        match choice:
+            case "1":
+                print("\nLNK File Parser: reads shell link files from the current user's Recent Items folder.")
+                from lnk_file_parser import main as run
+                run()
+            case "2":
+                print("\nPrefetch Parser: reads prefetch files from C:\\Windows\\Prefetch to show program execution history.")
+                from prefetch_parser import main as run
+                run()
+            case "3":
+                print("\nRecycle Bin Parser: reads $I metadata files from C:\\$Recycle.Bin to show deleted file history.")
+                from recycle_bin_parser import main as run
+                run()
+            case "4":
+                print("\nShimcache parser coming soon.")
+            case "5":
+                print("\nAmcache parser coming soon.")
+            case "6":
+                print("\nTimeline Correlator: merges all parser results into a single chronological timeline.")
+                from timeline_correlator import main as run
+                run()
+            case "0":
+                print("\nExiting.")
+                sys.exit(0)
+            case _:
+                print("\nInvalid choice. Please enter a number from the menu.")
 
 
 if __name__ == "__main__":
