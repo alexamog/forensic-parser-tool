@@ -8,6 +8,7 @@ RESULTS_DIR = "results"
 LNK_RESULTS = os.path.join(RESULTS_DIR, "lnk_results.json")
 PREFETCH_RESULTS = os.path.join(RESULTS_DIR, "prefetch_results.json")
 RECYCLE_BIN_RESULTS = os.path.join(RESULTS_DIR, "recycle_bin_results.json")
+SHIMCACHE_RESULTS = os.path.join(RESULTS_DIR, "shimcache_results.json")
 
 
 def load_json(path: str) -> list[dict]:
@@ -79,11 +80,29 @@ def extract_recycle_bin_events(results: list[dict]) -> list[dict]:
     return events
 
 
+def extract_shimcache_events(results: list[dict]) -> list[dict]:
+    events = []
+    for entry in results:
+        if "error" in entry:
+            continue
+        path = entry.get("path", "unknown")
+        ts = entry.get("last_modified")
+        if is_valid_timestamp(ts):
+            events.append({
+                "timestamp": ts,
+                "artifact": "Shimcache",
+                "description": f"Executable on filesystem: {path} (last modified)",
+                "source_file": "shimcache_results.json",
+            })
+    return events
+
+
 def main():
     events = []
     events += extract_lnk_events(load_json(LNK_RESULTS))
     events += extract_prefetch_events(load_json(PREFETCH_RESULTS))
     events += extract_recycle_bin_events(load_json(RECYCLE_BIN_RESULTS))
+    events += extract_shimcache_events(load_json(SHIMCACHE_RESULTS))
 
     events.sort(key=lambda e: e["timestamp"])
 
