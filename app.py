@@ -8,7 +8,7 @@ MENU = """
  1. LNK File Parser
  2. Prefetch Parser         (requires admin)
  3. Recycle Bin Parser      (requires admin)
- 4. Shimcache Parser        (coming soon)
+ 4. Shimcache Parser        (requires admin)
  5. Amcache Parser          (coming soon)
 ----------------------------------------
  6. Build Timeline
@@ -37,7 +37,9 @@ def main():
                 from recycle_bin_parser import main as run
                 run()
             case "4":
-                print("\nShimcache parser coming soon.")
+                print("\nShimcache Parser: reads AppCompatCache from the registry to show executables the OS has encountered.")
+                from shimcache_parser import main as run
+                run()
             case "5":
                 print("\nAmcache parser coming soon.")
             case "6":

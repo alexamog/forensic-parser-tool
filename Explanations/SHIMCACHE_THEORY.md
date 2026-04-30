@@ -128,7 +128,42 @@ The correct formula to move to the next entry is:
 next_entry_offset = current_offset + 26 + path_length + data_size
 ```
 
-The 26 accounts for all fixed fields in the entry (4 + 4 + 4 + 2 + 8 + 4), then `path_length` and `data_size` account for the two variable-length sections.
+The 26 is the sum of all fixed-size fields in an entry:
+
+| Field | Size |
+|-------|------|
+| Signature | 4 bytes |
+| Unknown | 4 bytes |
+| ceDataSize | 4 bytes |
+| Path length | 2 bytes |
+| Last modified time | 8 bytes |
+| Data size | 4 bytes |
+| **Total** | **26 bytes** |
+
+Then `path_length` and `data_size` account for the two variable-length sections. Together, `26 + path_length + data_size` gives the full size of one entry, allowing you to jump exactly to the start of the next one.
+
+### Entry offset vs fields
+
+`entry_offset` is a base position — a number that points to where the current entry starts in the binary data. Every field offset in the entry structure table above is relative to this base:
+
+```
+raw_data: [ header ... | 10ts fields... | 10ts fields... | 10ts fields... ]
+                         ^
+                         entry_offset
+```
+
+The loop moves from entry to entry by updating `entry_offset`. The field offsets (`+12`, `+14`, `+22`) never change — they are always measured from wherever the current entry starts.
+
+### Signature as a bytes literal
+
+`ENTRY_SIGNATURE = b"10ts"` is a bytes literal, not a string. The `b` prefix means each character is stored as its raw ASCII byte value (`0x31 0x30 0x74 0x73`). When you slice binary data, you get bytes back — so comparisons must be against bytes, not strings. Comparing `raw_data[entry_offset:entry_offset + 4]` against `"10ts"` (a string) would always return `False` even if the content matched.
+
+### When to use struct vs slicing
+
+Two tools are used when reading binary data:
+
+- **`struct.unpack_from`** — use when you need a number. Timestamps, sizes, offsets, and lengths are all read this way because you need to do arithmetic with them or pass them to another function.
+- **Slicing `[ : ]`** — use when you want raw bytes or a string. The signature check uses slicing because you are comparing bytes directly. The path uses slicing followed by `.decode("utf-16-le")` because it is text.
 
 ### Parsing approach
 
@@ -151,10 +186,6 @@ while entry_offset < len(data) - 4:
 
     entry_offset += 26 + path_length + data_size
 ```
-
----
-
----
 
 ---
 
