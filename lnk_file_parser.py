@@ -32,28 +32,32 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
             # Navigate past IDList if present to reach LinkInfo
             link_flags = struct.unpack_from("<I", data, 20)[0]
             has_id_list = bool(link_flags & 0x1)
+            has_link_info = bool(link_flags & 0x2)
             offset = 76
             if has_id_list:
                 id_list_size = struct.unpack_from("<H", data, offset)[0]
                 offset += 2 + id_list_size
 
-            # Read VolumeID and LocalBasePath offsets from LinkInfo
-            volume_id_offset = struct.unpack_from("<I", data, offset + 12)[0]
-            local_base_path_offset = struct.unpack_from("<I", data, offset + 16)[0]
-            vol = offset + volume_id_offset
+            drive_type = volume_serial = volume_name = target_path = None
 
-            # Read drive type, serial number, and volume label from VolumeID
-            drive_type = DRIVE_TYPES.get(struct.unpack_from("<I", data, vol + 4)[0], "Unknown")
-            drive_serial = f"{struct.unpack_from('<I', data, vol + 8)[0]:08X}"
-            vol_label_offset = struct.unpack_from("<I", data, vol + 12)[0]
-            label_start = vol + vol_label_offset
-            label_end = data.index(b"\x00", label_start)
-            volume_name = data[label_start:label_end].decode("ascii", errors="replace")
+            if has_link_info:
+                # Read VolumeID and LocalBasePath offsets from LinkInfo
+                volume_id_offset = struct.unpack_from("<I", data, offset + 12)[0]
+                local_base_path_offset = struct.unpack_from("<I", data, offset + 16)[0]
+                vol = offset + volume_id_offset
 
-            # Read target path from LocalBasePath
-            path_start = offset + local_base_path_offset
-            path_end = data.index(b"\x00", path_start)
-            target_path = data[path_start:path_end].decode("ascii", errors="replace")
+                # Read drive type, serial number, and volume label from VolumeID
+                drive_type = DRIVE_TYPES.get(struct.unpack_from("<I", data, vol + 4)[0], "Unknown")
+                volume_serial = f"{struct.unpack_from('<I', data, vol + 8)[0]:08X}"
+                vol_label_offset = struct.unpack_from("<I", data, vol + 12)[0]
+                label_start = vol + vol_label_offset
+                label_end = data.index(b"\x00", label_start)
+                volume_name = data[label_start:label_end].decode("ascii", errors="replace")
+
+                # Read target path from LocalBasePath
+                path_start = offset + local_base_path_offset
+                path_end = data.index(b"\x00", path_start)
+                target_path = data[path_start:path_end].decode("ascii", errors="replace")
 
             results.append({
                 "file": os.path.basename(lnk_file),
@@ -62,7 +66,7 @@ def lnk_parser(lnk_files: list[str]) -> list[dict]:
                 "last_written_time": str(last_written_time),
                 "logical_file_size": logical_file_size,
                 "drive_type": drive_type,
-                "volume_serial_number": drive_serial,
+                "volume_serial_number": volume_serial,
                 "volume_name": volume_name,
                 "target_path": target_path,
             })
