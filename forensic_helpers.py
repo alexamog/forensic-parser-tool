@@ -44,6 +44,15 @@ def format_file_size(size_bytes: int) -> str:
         return f"{size_bytes / 1024 ** 3:.2f} GB"
 
 
+def is_valid_timestamp(ts: str | None) -> bool:
+    """Return True if the timestamp is present and not a known placeholder value."""
+    if not ts or ts == "None":
+        return False
+    if ts.startswith("1980-01-01"):
+        return False
+    return True
+
+
 def extract_files(path: str, extension: str = "", prefix: str = "") -> list[str]:
     """Return a list of files in a directory matching the given extension and/or prefix."""
     return [

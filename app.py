@@ -11,6 +11,8 @@ MENU = """
  4. Shimcache Parser        (coming soon)
  5. Amcache Parser          (coming soon)
 ----------------------------------------
+ 6. Build Timeline
+----------------------------------------
  0. Exit
 ========================================
 """
@@ -34,6 +36,9 @@ def main():
             print("\nShimcache parser coming soon.")
         elif choice == "5":
             print("\nAmcache parser coming soon.")
+        elif choice == "6":
+            from timeline_correlator import main as run
+            run()
         elif choice == "0":
             print("\nExiting.")
             sys.exit(0)

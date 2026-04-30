@@ -17,6 +17,14 @@ The goal of this project is to build parsers from the ground up - reading raw bi
 
 ---
 
+## Timeline Correlator
+
+`timeline_correlator.py` reads all parser result files and merges them into a single chronological timeline, sorted by timestamp. Each event is tagged with its artifact source, giving a unified view of activity across all parsed artifacts.
+
+Results are written to `results/timeline.json`. Run it from `app.py` after running the individual parsers.
+
+---
+
 ## Supporting Documentation
 
 - [LNK_THEORY.md](Explanations/LNK_THEORY.md) - What LNK files are, their forensic value, and how they are structured
