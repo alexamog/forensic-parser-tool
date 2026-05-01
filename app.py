@@ -40,8 +40,6 @@ def main():
                 print("\nShimcache Parser: reads AppCompatCache from the registry to show executables the OS has encountered.")
                 from shimcache_parser import main as run
                 run()
-            case "5":
-                print("\nAmcache parser coming soon.")
             case "6":
                 print("\nTimeline Correlator: merges all parser results into a single chronological timeline.")
                 from timeline_correlator import main as run
